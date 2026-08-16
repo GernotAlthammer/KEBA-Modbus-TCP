@@ -1,0 +1,58 @@
+title: KEBA Wallbox
+path: keba-wallbox
+icon: mdi:ev-station
+badges: []
+cards:
+  # Block 1: Bedienung & Status
+  - type: entities
+    title: Steuerung & Status
+    icon: mdi:tune
+    show_header_toggle: false
+    entities:
+      - entity: sensor.keba_p30_charging_state
+        name: Betriebszustand
+        icon: mdi:information-outline
+      - entity: switch.keba_p30_enable_charging_station
+        name: Freigabe Ladestation
+        icon: mdi:power
+      - entity: number.keba_p30_max_charging_current
+        name: Max. Ladestrom
+        icon: mdi:current-ac
+
+  # Block 2: Aktuelle Ladeleistung als Tacho
+  - type: gauge
+    entity: sensor.keba_p30_active_power
+    name: Aktuelle Ladeleistung
+    unit: W
+    min: 0
+    max: 22000
+    needle: true
+    severity:
+      green: 0
+      yellow: 11000
+      red: 22000
+
+  # Block 3: Gesamtenergie & Phasenspannungen
+  - type: vertical-stack
+    cards:
+      - type: entity
+        entity: sensor.keba_p30_total_energy
+        name: Gesamtverbrauch
+        icon: mdi:counter
+
+      - type: glance
+        title: Netzspannungen
+        columns: 3
+        show_name: true
+        show_icon: true
+        show_state: true
+        entities:
+          - entity: sensor.keba_p30_voltage_l1
+            name: Phase 1
+            icon: mdi:sine-wave
+          - entity: sensor.keba_p30_voltage_l2
+            name: Phase 2
+            icon: mdi:sine-wave
+          - entity: sensor.keba_p30_voltage_l3
+            name: Phase 3
+            icon: mdi:sine-wave
