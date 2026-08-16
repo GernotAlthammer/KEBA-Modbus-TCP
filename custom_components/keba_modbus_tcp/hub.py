@@ -1,11 +1,10 @@
 import asyncio
 import logging
 from pymodbus.client import AsyncModbusTcpClient
-from pymodbus.payload import BinaryPayloadDecoder
-from pymodbus.constants import Endian
 from .const import KEBA_PORT, KEBA_UNIT_ID
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class KebaHub:
     def __init__(self, hass, host):
@@ -32,13 +31,14 @@ class KebaHub:
                 if result.isError():
                     _LOGGER.error(f"Fehler beim Lesen des Registers {address}")
                     return None
-                
-                decoder = BinaryPayloadDecoder.fromRegisters(
-                    result.registers, byteorder=Endian.BIG, wordorder=Endian.LITTLE
-                )
-                return decoder.decode_32bit_uint()
+
+                # KEBA Spezifikation: Big-Endian Byte Order, Little-Endian Word Order
+                # Register 0 = Low Word, Register 1 = High Word
+                regs = result.registers
+                val = (regs[1] << 16) | regs[0]
+                return val
             except Exception as e:
-                _LOGGER.error(f"Modbus Lese-Fehler: {e}")
+                _LOGGER.error(f"Modbus Lese-Fehler bei Register {address}: {e}")
                 return None
 
     async def write_uint16_register(self, address: int, value: int):
@@ -52,4 +52,4 @@ class KebaHub:
                 if result.isError():
                     _LOGGER.error(f"Fehler beim Schreiben des Registers {address}")
             except Exception as e:
-                _LOGGER.error(f"Modbus Schreib-Fehler: {e}")
+                _LOGGER.error(f"Modbus Schreib-Fehler bei Register {address}: {e}")
