@@ -1,0 +1,10 @@
+{
+  "domain": "keba_modbus_tcp",
+  "name": "KEBA P30 Wallbox",
+  "codeowners": ["@GernotAlthammer"],
+  "config_flow": true,
+  "dependencies": [],
+  "iot_class": "local_polling",
+  "requirements": ["pymodbus>=3.5.0"],
+  "version": "1.0.0"
+}
