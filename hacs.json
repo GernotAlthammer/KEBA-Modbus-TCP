@@ -1,0 +1,5 @@
+{
+  "name": "KEBA P30 Modbus TCP",
+  "render_readme": true,
+  "hacs": "1.19.0"
+}
