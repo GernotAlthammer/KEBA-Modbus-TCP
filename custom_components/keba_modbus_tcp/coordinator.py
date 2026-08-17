@@ -70,7 +70,12 @@ class KebaP30DynamicCoordinator(DataUpdateCoordinator[dict[str, int]]):
             for key, address in DYNAMIC_REGISTERS.items():
                 data[key] = await self.hub.async_read_uint32(address)
         except KebaModbusError as err:
-            raise UpdateFailed(str(err)) from err
+            # Wenn bereits Daten vorhanden sind, behalte die alten Meßwerte
+            if self.data:
+                _LOGGER.warning("Modbus-Verbindung fehlgeschlagen. Behalte alte dynamische Messwerte bei: %s", err)
+                return self.data
+            # Nur wenn noch nie Daten empfangen wurden (Start), wirf einen Fehler
+            raise UpdateFailed(f"Initiale Verbindung fehlgeschlagen: {str(err)}") from err
         return data
 
 
@@ -106,5 +111,9 @@ class KebaP30StaticCoordinator(DataUpdateCoordinator[dict[str, int]]):
             for key, address in registers.items():
                 data[key] = await self.hub.async_read_uint32(address)
         except KebaModbusError as err:
-            raise UpdateFailed(str(err)) from err
+            # Wenn bereits Daten vorhanden sind, behalte die alten Meßwerte
+            if self.data:
+                _LOGGER.warning("Modbus-Verbindung fehlgeschlagen. Behalte alte statische Daten bei: %s", err)
+                return self.data
+            raise UpdateFailed(f"Initiale Verbindung fehlgeschlagen: {str(err)}") from err
         return data
