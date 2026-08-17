@@ -127,7 +127,7 @@ DYNAMIC_SENSORS: tuple[KebaP30SensorDescription, ...] = (
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         suggested_display_precision=2,
-        value_fn=lambda d: d["total_energy"] / 1000,
+        value_fn=lambda d: d["total_energy"] / 10000,
     ),
     KebaP30SensorDescription(
         key="voltage_l1",
@@ -172,7 +172,7 @@ DYNAMIC_SENSORS: tuple[KebaP30SensorDescription, ...] = (
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL,
         suggested_display_precision=2,
-        value_fn=lambda d: d["charged_energy"] / 1000,
+        value_fn=lambda d: d["charged_energy"] / 10000,
     ),
     KebaP30SensorDescription(
         key="rfid_tag",
