@@ -137,7 +137,7 @@ class KebaP30ModbusHub:
                 )
             except TypeError:
                 return await self._client.read_holding_registers(
-                    address, count, device_id=self._unit_id
+                    address=address, count=count, device_id=self._unit_id
                 )
 
     async def _write_register(self, address: int, value: int):
@@ -153,7 +153,7 @@ class KebaP30ModbusHub:
                 )
             except TypeError:
                 return await self._client.write_register(
-                    address, value, device_id=self._unit_id
+                    address=address, value=value, device_id=self._unit_id
                 )
 
     async def _respect_write_interval(self) -> None:
