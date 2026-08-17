@@ -26,7 +26,7 @@ CONF_WORD_ORDER = "word_order"
 # KEBA recommends >0.5s for reading registers that change often, and higher
 # intervals for registers that rarely change. Writing should happen no more
 # often than every >5s "to avoid stressing the charging station".
-DEFAULT_FAST_SCAN_INTERVAL = 10  # seconds - dynamic data (state, currents, power, ...)
+DEFAULT_FAST_SCAN_INTERVAL = 120  # seconds - dynamic data (state, currents, power, ...)
 DEFAULT_SLOW_SCAN_INTERVAL = 300  # seconds - static data (serial, product type, ...)
 MIN_WRITE_INTERVAL = 5.0  # seconds, see KEBA guide chapter 2 "Overview"
 
