@@ -1,0 +1,96 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to KEBA P30 wallbox",
+        "description": "Enter the connection details of your KEBA P30 charging station. Modbus TCP must be enabled on the wallbox and must not be used together with the UDP interface at the same time.",
+        "data": {
+          "name": "Name",
+          "host": "IP address / hostname",
+          "port": "Port",
+          "unit_id": "Unit ID (Slave ID)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Check the IP address and port, and make sure Modbus TCP is enabled on the wallbox.",
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This KEBA P30 wallbox is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "KEBA P30 options",
+        "data": {
+          "fast_scan_interval": "Fast update interval (seconds) - charging state, currents, power, voltages",
+          "slow_scan_interval": "Slow update interval (seconds) - serial number, product type, firmware, max current",
+          "firmware_register": "Firmware version register",
+          "word_order": "Word order (only change if register values look incorrect)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "charging_state": {
+        "name": "Charging state",
+        "state": {
+          "startup": "Starting up",
+          "not_ready": "Not ready",
+          "ready": "Ready",
+          "charging": "Charging",
+          "error": "Error",
+          "suspended": "Suspended"
+        }
+      },
+      "cable_state": {
+        "name": "Cable state",
+        "state": {
+          "unplugged": "No cable plugged in",
+          "plugged_station": "Plugged into station",
+          "locked_station": "Locked into station",
+          "plugged_vehicle": "Plugged into vehicle",
+          "locked_charging": "Locked and charging"
+        }
+      },
+      "error_code": { "name": "Error code" },
+      "current_l1": { "name": "Current phase 1" },
+      "current_l2": { "name": "Current phase 2" },
+      "current_l3": { "name": "Current phase 3" },
+      "active_power": { "name": "Active power" },
+      "total_energy": { "name": "Total energy" },
+      "voltage_l1": { "name": "Voltage phase 1" },
+      "voltage_l2": { "name": "Voltage phase 2" },
+      "voltage_l3": { "name": "Voltage phase 3" },
+      "power_factor": { "name": "Power factor" },
+      "charged_energy": { "name": "Charged energy (session)" },
+      "rfid_tag": { "name": "RFID tag UID" },
+      "serial_number": { "name": "Serial number" },
+      "firmware_version": { "name": "Firmware version" },
+      "product_type": { "name": "Product type" },
+      "max_charging_current": { "name": "Max charging current" },
+      "max_supported_current": { "name": "Max supported current (hardware)" }
+    },
+    "binary_sensor": {
+      "vehicle_connected": { "name": "Vehicle connected" },
+      "charging": { "name": "Charging" },
+      "problem": { "name": "Problem" }
+    },
+    "number": {
+      "set_charging_current": { "name": "Charging current limit" },
+      "set_energy_limit": { "name": "Energy limit (current session)" },
+      "failsafe_current": { "name": "Failsafe current" },
+      "failsafe_timeout": { "name": "Failsafe timeout" }
+    },
+    "switch": {
+      "charging_station_enabled": { "name": "Charging station enabled" }
+    },
+    "button": {
+      "unlock_plug": { "name": "Unlock plug" },
+      "persist_failsafe_settings": { "name": "Persist failsafe settings" }
+    }
+  }
+}
