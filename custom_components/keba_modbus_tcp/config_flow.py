@@ -7,9 +7,9 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
     CONF_FAST_SCAN_INTERVAL,
@@ -69,7 +69,7 @@ class KebaP30ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial setup step."""
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -96,26 +96,23 @@ class KebaP30ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
+        config_entry: ConfigEntry,
     ) -> KebaP30OptionsFlow:
         """Return the options flow for this integration."""
-        return KebaP30OptionsFlow(config_entry)
+        return KebaP30OptionsFlow()
 
 
 class KebaP30OptionsFlow(config_entries.OptionsFlow):
     """Handle options for KEBA P30 Modbus TCP."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        self._config_entry = config_entry
-
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        options = self._config_entry.options
+        options = self.config_entry.options
         schema = vol.Schema(
             {
                 vol.Optional(
