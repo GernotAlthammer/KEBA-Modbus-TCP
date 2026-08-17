@@ -18,19 +18,7 @@ class KebaModbusError(Exception):
 
 
 class KebaP30ModbusHub:
-    """Thin async wrapper around pymodbus for the KEBA P30 Modbus TCP interface.
-
-    Notes derived from the KEBA "Modbus TCP Programmers Guide":
-    - The Unit ID (slave id) must be set to 255.
-    - Supported function codes are FC3 (Read Holding Registers) and
-      FC6 (Write Single Register).
-    - It is *not* possible to read several logical registers within a single
-      request. Every readable value is a UINT32 spread across 2 Modbus
-      words, so every value requires its own read request.
-    - KEBA recommends a read interval of >0.5s (higher for rarely changing
-      data) and a write interval of >5s "to avoid stressing the charging
-      station". The write interval is enforced in this hub.
-    """
+    """Thin async wrapper around pymodbus for the KEBA P30 Modbus TCP interface."""
 
     def __init__(
         self,
@@ -143,8 +131,6 @@ class KebaP30ModbusHub:
                 address=address, count=count, slave=self._unit_id
             )
         except TypeError:
-            # Older/newer pymodbus releases use "unit" or "device_id"
-            # instead of "slave" as the keyword argument name.
             try:
                 return await self._client.read_holding_registers(
                     address=address, count=count, unit=self._unit_id
@@ -171,12 +157,7 @@ class KebaP30ModbusHub:
                 )
 
     async def _respect_write_interval(self) -> None:
-        """Ensure at least MIN_WRITE_INTERVAL seconds pass between writes.
-
-        KEBA recommends a minimum interval of 5 seconds between write
-        commands "to avoid stressing the charging station" (see chapter 2,
-        "Overview", of the Modbus TCP Programmers Guide).
-        """
+        """Ensure at least MIN_WRITE_INTERVAL seconds pass between writes."""
         if self._last_write_monotonic is None:
             return
         elapsed = time.monotonic() - self._last_write_monotonic
