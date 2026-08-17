@@ -31,7 +31,13 @@ class KebaP30ModbusHub:
         self._port = port
         self._unit_id = unit_id
         self._word_order = word_order
-        self._client = AsyncModbusTcpClient(host=host, port=port)
+        self._client = AsyncModbusTcpClient(
+            host=host,
+            port=port,
+            timeout=3,
+            retries=3,
+            reconnect_delay=1,
+        )
         self._lock = asyncio.Lock()
         self._last_write_monotonic: float | None = None
 
@@ -50,8 +56,7 @@ class KebaP30ModbusHub:
         async with self._lock:
             if self._client.connected:
                 return True
-            await self._client.connect()
-            return self._client.connected
+            return await self._client.connect()
 
     async def async_close(self) -> None:
         """Close the connection to the wallbox."""
@@ -59,12 +64,14 @@ class KebaP30ModbusHub:
             self._client.close()
 
     async def _ensure_connected(self) -> None:
+        """Ensure active TCP connection before issuing commands."""
         if not self._client.connected:
-            await self._client.connect()
-        if not self._client.connected:
-            raise KebaModbusError(
-                f"Unable to connect to KEBA P30 at {self._host}:{self._port}"
-            )
+            _LOGGER.debug("Reconnecting Modbus TCP client to %s:%s", self._host, self._port)
+            connected = await self._client.connect()
+            if not connected:
+                raise KebaModbusError(
+                    f"Unable to connect to KEBA P30 at {self._host}:{self._port}"
+                )
 
     async def async_read_uint32(self, address: int) -> int:
         """Read a single KEBA UINT32 value (2 Modbus holding registers)."""
@@ -125,7 +132,7 @@ class KebaP30ModbusHub:
                 )
 
     async def _read_holding_registers(self, address: int, count: int):
-        """Call read_holding_registers, tolerating pymodbus API differences."""
+        """Call read_holding_registers with proper keyword arguments."""
         try:
             return await self._client.read_holding_registers(
                 address=address, count=count, slave=self._unit_id
@@ -141,7 +148,7 @@ class KebaP30ModbusHub:
                 )
 
     async def _write_register(self, address: int, value: int):
-        """Call write_register, tolerating pymodbus API differences."""
+        """Call write_register with proper keyword arguments."""
         try:
             return await self._client.write_register(
                 address=address, value=value, slave=self._unit_id
