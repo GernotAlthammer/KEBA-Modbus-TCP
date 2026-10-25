@@ -3,6 +3,7 @@
   "name": "KEBA P30 Modbus TCP",
   "codeowners": ["@GernotAlthammer"],
   "config_flow": true,
+  "dependencies": ["modbus"],
   "documentation": "https://github.com/GernotAlthammer/KEBA-Modbus-TCP",
   "integration_type": "hub",
   "iot_class": "local_polling",
